@@ -1,50 +1,14 @@
-package com.example.myapplication3;
-
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.util.AttributeSet;
-import androidx.cardview.widget.CardView;
-
-public class TriangleCardView extends CardView {
-
-    private Path path;
-    private Paint paint;
-
-    public TriangleCardView(Context context) {
-        super(context);
-        init();
-    }
-
-    public TriangleCardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public TriangleCardView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        path = new Path();
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setStrokeWidth(0);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        int width = getWidth();
-        int height = getHeight();
-        path.reset();
-        path.moveTo(width / 2f, 0);
-        path.lineTo(width, height);
-        path.lineTo(0, height);
-        path.close();
-        canvas.clipPath(path); // Clip the canvas to the triangle path
-        super.onDraw(canvas);
-    }
-}
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="polygon">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="1dp"
+        android:color="@android:color/black" />
+    <path android:fillType="evenOdd">
+        <!-- Triangle path data -->
+        <moveTo android:x="50%" android:y="0%" />
+        <lineTo android:x="100%" android:y="100%" />
+        <lineTo android:x="0%" android:y="100%" />
+        <lineTo android:x="50%" android:y="0%" />
+    </path>
+</shape>
