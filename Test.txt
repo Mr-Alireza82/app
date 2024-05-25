@@ -1,77 +1,42 @@
 package com.example.myapplication3;
 
-import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.Region;
-import android.util.AttributeSet;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
-public class TriangleCardView extends CardView {
+import java.util.Objects;
 
-    private Path path;
-
-    public TriangleCardView(Context context) {
-        super(context);
-        init();
-    }
-
-    public TriangleCardView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public TriangleCardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        path = new Path();
-    }
+public class MainActivity extends AppCompatActivity {
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updatePath(w, h);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    private void updatePath(int width, int height) {
-        path.reset();
-        path.moveTo(width / 2f, 0);
-        path.lineTo(width, height);
-        path.lineTo(0, height);
-        path.close();
-    }
-
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        canvas.save();
-        canvas.clipPath(path);  // Clip the canvas to the triangle path
-        super.dispatchDraw(canvas);
-        canvas.restore();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        if (isPointInPath(x, y)) {
-            return super.onTouchEvent(event);
-        } else {
-            return false;  // Touch event is outside the triangle
-        }
-    }
-
-    private boolean isPointInPath(float x, float y) {
-        Region region = new Region();
-        region.setPath(path, new Region(0, 0, getWidth(), getHeight()));
-        return region.contains((int) x, (int) y);
+        ImageView mImageView= (ImageView)findViewById(R.id.triangleView);
+        Bitmap original = BitmapFactory.decodeResource(getResources(),R.drawable.receipt);
+        Bitmap mask = BitmapFactory.decodeResource(getResources(),R.drawable.receipt);
+        Bitmap result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas mCanvas = new Canvas(result);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        mCanvas.drawBitmap(original, 0, 0, null);
+        mCanvas.drawBitmap(mask, 0, 0, paint);
+        paint.setXfermode(null);
+        mImageView.setImageBitmap(result);
+        mImageView.setScaleType(ImageView.ScaleType.CENTER);
+        mImageView.setBackgroundResource(R.drawable.triangle_outline_svgrepo_com);
     }
 }
