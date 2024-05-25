@@ -1,43 +1,47 @@
-package com.example.app;
-
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import androidx.appcompat.widget.AppCompatImageView;
 
-public class CustomImageView extends AppCompatImageView {
+public class TriangleOutlineView extends AppCompatImageView {
 
+    private Paint paint;
     private Path path;
 
-    public CustomImageView(Context context) {
+    public TriangleOutlineView(Context context) {
         super(context);
         init();
     }
 
-    public CustomImageView(Context context, AttributeSet attrs) {
+    public TriangleOutlineView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TriangleOutlineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5); // Set the stroke width as needed
+
         path = new Path();
-        // Define your vector path here
-        path.moveTo(48, 448);
-        path.lineTo(1208, -384);
-        path.lineTo(1208, 384);
-        path.lineTo(-416, 0);
+        // Define your triangle outline path here
+        path.moveTo(100, 100);
+        path.lineTo(300, 100);
+        path.lineTo(200, 300);
         path.close();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.clipPath(path); // Apply the vector path as a clip path
-        super.onDraw(canvas); // Draw the image
+        super.onDraw(canvas);
+        canvas.drawPath(path, paint);
     }
 }
