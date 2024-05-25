@@ -1,9 +1,10 @@
+package com.example.myapplication3;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.util.AttributeSet;
 import androidx.cardview.widget.CardView;
 
 public class TriangleCardView extends CardView {
@@ -11,17 +12,17 @@ public class TriangleCardView extends CardView {
     private Path path;
     private Paint paint;
 
-    public TriangleCardView(@NonNull Context context) {
+    public TriangleCardView(Context context) {
         super(context);
         init();
     }
 
-    public TriangleCardView(@NonNull Context context, @Nullable android.util.AttributeSet attrs) {
+    public TriangleCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TriangleCardView(@NonNull Context context, @Nullable android.util.AttributeSet attrs, int defStyleAttr) {
+    public TriangleCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -30,21 +31,20 @@ public class TriangleCardView extends CardView {
         path = new Path();
         paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5); // Adjust stroke width as needed
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStrokeWidth(0);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // Draw the triangle outline path
-        path.reset();
         int width = getWidth();
         int height = getHeight();
+        path.reset();
         path.moveTo(width / 2f, 0);
         path.lineTo(width, height);
         path.lineTo(0, height);
         path.close();
-        canvas.drawPath(path, paint);
+        canvas.clipPath(path); // Clip the canvas to the triangle path
         super.onDraw(canvas);
     }
 }
