@@ -1,31 +1,27 @@
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.util.AttributeSet;
-import androidx.appcompat.widget.AppCompatImageView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
-public class TriangleImageView extends AppCompatImageView {
+public class TriangleCardView extends CardView {
 
     private Path path;
     private Paint paint;
-    private Bitmap bitmap;
 
-    public TriangleImageView(Context context) {
+    public TriangleCardView(@NonNull Context context) {
         super(context);
         init();
     }
 
-    public TriangleImageView(Context context, AttributeSet attrs) {
+    public TriangleCardView(@NonNull Context context, @Nullable android.util.AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TriangleImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TriangleCardView(@NonNull Context context, @Nullable android.util.AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -34,47 +30,21 @@ public class TriangleImageView extends AppCompatImageView {
         path = new Path();
         paint = new Paint();
         paint.setAntiAlias(true);
-
-        // Set up the bitmap shader
-        bitmap = getBitmapFromImageView(); // Get the bitmap from the ImageView
-        if (bitmap != null) {
-            BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            paint.setShader(shader);
-        }
-    }
-
-    private Bitmap getBitmapFromImageView() {
-        // Get the bitmap from the ImageView
-        // Note: You need to set the image using setImageResource, setImageBitmap, or setImageDrawable before this method is called
-        if (getDrawable() == null) {
-            return null;
-        }
-        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        getDrawable().setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        getDrawable().draw(canvas);
-        return bitmap;
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updatePath(w, h);
-    }
-
-    private void updatePath(int width, int height) {
-        path.reset();
-        path.moveTo(width / 2f, 0);
-        path.lineTo(width, height);
-        path.lineTo(0, height);
-        path.close();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5); // Adjust stroke width as needed
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        // Draw the triangle outline path
+        path.reset();
+        int width = getWidth();
+        int height = getHeight();
+        path.moveTo(width / 2f, 0);
+        path.lineTo(width, height);
+        path.lineTo(0, height);
+        path.close();
+        canvas.drawPath(path, paint);
         super.onDraw(canvas);
-        if (bitmap != null) {
-            canvas.drawPath(path, paint);
-        }
     }
 }
