@@ -1,49 +1,24 @@
-package com.example.myapplication3;
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.util.AttributeSet;
-import androidx.cardview.widget.CardView;
+    <com.example.myapplication3.TriangleCardView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="0dp">
 
-public class TriangleCardView extends CardView {
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/receipt" />
 
-    private Path path;
-
-    public TriangleCardView(Context context) {
-        super(context);
-        init();
-    }
-
-    public TriangleCardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public TriangleCardView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        path = new Path();
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        path.reset();
-        path.moveTo(w / 2f, 0);
-        path.lineTo(w, h);
-        path.lineTo(0, h);
-        path.close();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.save();
-        canvas.clipPath(path); // Clip the canvas to the triangle path
-        super.onDraw(canvas);
-        canvas.restore();
-    }
-}
+    </com.example.myapplication3.TriangleCardView>
+</FrameLayout>
