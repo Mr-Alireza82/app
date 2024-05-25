@@ -1,98 +1,16 @@
 package com.example.myapplication3;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.Region;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class TriangleViewGroup extends ViewGroup {
-
-    private Path path;
-
-    public TriangleViewGroup(Context context) {
-        super(context);
-        init();
-    }
-
-    public TriangleViewGroup(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public TriangleViewGroup(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        path = new Path();
-    }
+public class MainActivity extends AppCompatActivity {
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updatePath(w, h);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    private void updatePath(int width, int height) {
-        path.reset();
-        path.moveTo(width / 2f, 0);
-        path.lineTo(width, height);
-        path.lineTo(0, height);
-        path.close();
-    }
-
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        canvas.save();
-        canvas.clipPath(path);  // Clip the canvas to the triangle path
-        super.dispatchDraw(canvas);
-        canvas.restore();
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            child.layout(0, 0, getWidth(), getHeight());
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        setMeasuredDimension(width, height);
-
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // Check if the touch event is within the triangle path
-        float x = event.getX();
-        float y = event.getY();
-
-        if (isPointInPath(x, y)) {
-            return super.onTouchEvent(event);
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isPointInPath(float x, float y) {
-        Region region = new Region();
-        region.setPath(path, new Region(0, 0, getWidth(), getHeight()));
-        return region.contains((int) x, (int) y);
+        TriangleViewGroup triangleViewGroup = findViewById(R.id.triangleViewGroup);
+        triangleViewGroup.setImageResources(R.drawable.receipt, R.drawable.internet);
     }
 }
