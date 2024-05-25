@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,27 +18,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ImageView mImageView = findViewById(R.id.triangleView);
-        Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.profile_image);
-        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.triangle_mask);
+        Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.receipt);
 
         // Create a new bitmap to hold the result
-        Bitmap result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
 
         // Create a canvas with the result bitmap
         Canvas mCanvas = new Canvas(result);
 
         // Paint for masking
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+        // Create a path for the triangle shape
+        Path path = new Path();
+        path.moveTo(0, 0);
+        path.lineTo(original.getWidth(), 0);
+        path.lineTo(original.getWidth() / 2f, original.getHeight());
+        path.close();
 
         // Draw the original image
         mCanvas.drawBitmap(original, 0, 0, null);
 
-        // Draw the mask
-        mCanvas.drawBitmap(mask, 0, 0, paint);
+        // Clip the canvas to the triangle path
+        mCanvas.clipPath(path);
 
-        // Clear the xfer mode
-        paint.setXfermode(null);
+        // Clear the canvas with transparent color
+        mCanvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
+
+        // Draw the clipped image
+        mCanvas.drawBitmap(original, 0, 0, null);
 
         // Set the result bitmap to the ImageView
         mImageView.setImageBitmap(result);
