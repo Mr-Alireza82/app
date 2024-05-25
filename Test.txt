@@ -1,1 +1,77 @@
-Cannot resolve method 'setImageResources' in 'TriangleViewGroup'
+package com.example.myapplication3;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.Region;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+
+public class TriangleCardView extends CardView {
+
+    private Path path;
+
+    public TriangleCardView(Context context) {
+        super(context);
+        init();
+    }
+
+    public TriangleCardView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public TriangleCardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        path = new Path();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        updatePath(w, h);
+    }
+
+    private void updatePath(int width, int height) {
+        path.reset();
+        path.moveTo(width / 2f, 0);
+        path.lineTo(width, height);
+        path.lineTo(0, height);
+        path.close();
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        canvas.save();
+        canvas.clipPath(path);  // Clip the canvas to the triangle path
+        super.dispatchDraw(canvas);
+        canvas.restore();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        if (isPointInPath(x, y)) {
+            return super.onTouchEvent(event);
+        } else {
+            return false;  // Touch event is outside the triangle
+        }
+    }
+
+    private boolean isPointInPath(float x, float y) {
+        Region region = new Region();
+        region.setPath(path, new Region(0, 0, getWidth(), getHeight()));
+        return region.contains((int) x, (int) y);
+    }
+}
