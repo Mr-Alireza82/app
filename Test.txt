@@ -1,16 +1,1 @@
-package com.example.myapplication3;
-
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        TriangleViewGroup triangleViewGroup = findViewById(R.id.triangleViewGroup);
-        triangleViewGroup.setImageResources(R.drawable.receipt, R.drawable.internet);
-    }
-}
+Cannot resolve method 'setImageResources' in 'TriangleViewGroup'
