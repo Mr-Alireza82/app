@@ -1,0 +1,43 @@
+package com.example.app;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.util.AttributeSet;
+import androidx.appcompat.widget.AppCompatImageView;
+
+public class CustomImageView extends AppCompatImageView {
+
+    private Path path;
+
+    public CustomImageView(Context context) {
+        super(context);
+        init();
+    }
+
+    public CustomImageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        path = new Path();
+        // Define your vector path here
+        path.moveTo(48, 448);
+        path.lineTo(1208, -384);
+        path.lineTo(1208, 384);
+        path.lineTo(-416, 0);
+        path.close();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.clipPath(path); // Apply the vector path as a clip path
+        super.onDraw(canvas); // Draw the image
+    }
+}
