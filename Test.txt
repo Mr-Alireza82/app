@@ -1,77 +1,22 @@
-package com.example.myapplication3;
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
+    <com.example.myapplication3.TriangleViewGroup
+        android:layout_width="150dp"
+        android:layout_height="150dp">
 
-public class TriangleViewGroup extends ViewGroup {
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/receipt" />
 
-    private Path path;
-
-    public TriangleViewGroup(Context context) {
-        super(context);
-        init();
-    }
-
-    public TriangleViewGroup(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public TriangleViewGroup(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        path = new Path();
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updatePath(w, h);
-    }
-
-    private void updatePath(int width, int height) {
-        path.reset();
-        path.moveTo(width / 2f, 0);
-        path.lineTo(width, height);
-        path.lineTo(0, height);
-        path.close();
-    }
-
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        canvas.save();
-        canvas.clipPath(path);  // Clip the canvas to the triangle path
-        super.dispatchDraw(canvas);
-        canvas.restore();
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            child.layout(0, 0, getWidth(), getHeight());
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        setMeasuredDimension(width, height);
-
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
-        }
-    }
-}
+    </com.example.myapplication3.TriangleViewGroup>
+</FrameLayout>
