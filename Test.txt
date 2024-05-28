@@ -1,9 +1,10 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="200dp"
-    android:height="200dp"
-    android:viewportWidth="206"
-    android:viewportHeight="206">
-    <path
-        android:pathData="M18,18c24,-24 146,-24 170,0s24,146 0,170S42,212 18,188 -6,42 18,18Z"
-        android:fillColor="#28ff03"/>
-</vector>
+        // Set up the path for the triangle to match the dimensions
+        Path trianglePath = new Path();
+        trianglePath.moveTo(triangleWidth / 2, 0); // top center
+        trianglePath.lineTo(triangleWidth, triangleHeight); // bottom right
+        trianglePath.lineTo(0, triangleHeight); // bottom left
+        trianglePath.close();
+
+        // Clip the canvas with the triangle path
+        canvas.save();
+        canvas.clipPath(trianglePath);
