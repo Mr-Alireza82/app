@@ -1,10 +1,105 @@
-        // Set up the path for the triangle to match the dimensions
-        Path trianglePath = new Path();
-        trianglePath.moveTo(triangleWidth / 2, 0); // top center
-        trianglePath.lineTo(triangleWidth, triangleHeight); // bottom right
-        trianglePath.lineTo(0, triangleHeight); // bottom left
-        trianglePath.close();
+package com.example.myapplication;
 
-        // Clip the canvas with the triangle path
-        canvas.save();
-        canvas.clipPath(trianglePath);
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.PathParser;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
+
+import com.google.android.material.card.MaterialCardView;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Load the image as a Bitmap
+        Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.receipt);
+
+        // Define the dimensions of the path
+        float pathWidth = dpToPx(200); // Convert 200dp to pixels
+        float pathHeight = dpToPx(200); // Convert 200dp to pixels
+
+        // Calculate the scaling factor to fit the image inside the path
+        float scaleX = pathWidth / originalBitmap.getWidth();
+        float scaleY = pathHeight / originalBitmap.getHeight();
+        float scale = Math.min(scaleX, scaleY);
+
+        // Create a matrix for scaling
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+
+        // Create the scaled bitmap
+        Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+
+        // Create a mutable Bitmap to draw the masked image
+        Bitmap maskedBitmap = Bitmap.createBitmap((int) pathWidth, (int) pathHeight, Bitmap.Config.ARGB_8888);
+
+        // Create a Canvas to draw on the mutable Bitmap
+        Canvas canvas = new Canvas(maskedBitmap);
+
+        // Create a Paint object for the mask
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        // Parse the path data from the vector drawable
+        Path path = getPathFromVectorDrawable(R.drawable.ps_bowed);
+
+        if (path != null) {
+            // Clip the canvas with the path
+            canvas.save();
+            canvas.clipPath(path);
+
+            // Calculate the position to center the scaled bitmap in the path
+            float dx = (pathWidth - scaledBitmap.getWidth()) / 2;
+            float dy = (pathHeight - scaledBitmap.getHeight()) / 2;
+
+            // Draw the scaled image onto the canvas, which is now clipped to the path
+            canvas.drawBitmap(scaledBitmap, dx, dy, paint);
+            canvas.restore();
+
+            // Set the masked Bitmap to an ImageView
+            ImageView imageView = findViewById(R.id.imageView);
+            imageView.setImageBitmap(maskedBitmap);
+
+            Log.d("BitmapInfo", "Original Bitmap Width: " + originalBitmap.getWidth() + ", Height: " + originalBitmap.getHeight());
+            Log.d("BitmapInfo", "Masked Bitmap Width: " + maskedBitmap.getWidth() + ", Height: " + maskedBitmap.getHeight());
+        } else {
+            Log.e("PathError", "Failed to parse path data.");
+        }
+    }
+
+    private float dpToPx(float dp) {
+        return dp * getResources().getDisplayMetrics().density;
+    }
+
+    private Path getPathFromVectorDrawable(int drawableId) {
+        XmlPullParser parser = getResources().getXml(drawableId);
+        try {
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG && "path".equals(parser.getName())) {
+                    String pathData = parser.getAttributeValue(null, "pathData");
+                    return PathParser.createPathFromPathData(pathData);
+                }
+                eventType = parser.next();
+            }
+        } catch (XmlPullParserException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}
