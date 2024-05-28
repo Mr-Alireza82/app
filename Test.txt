@@ -1,3 +1,79 @@
-<resources>
-    <string name="vector_path_data">M18,18c24,-24 146,-24 170,0s24,146 0,170S42,212 18,188 -6,42 18,18Z</string>
-</resources>
+package com.example.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.PathParser;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
+
+import com.google.android.material.card.MaterialCardView;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Load the image as a Bitmap
+        Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.receipt);
+
+        // Define the dimensions of the path
+        float pathWidth = dpToPx(200); // Convert 200dp to pixels
+        float pathHeight = dpToPx(200); // Convert 200dp to pixels
+
+        // Calculate the scaling factor to fit the image inside the path
+        float scaleX = pathWidth / originalBitmap.getWidth();
+        float scaleY = pathHeight / originalBitmap.getHeight();
+        float scale = Math.min(scaleX, scaleY);
+
+        // Create a matrix for scaling
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+
+        // Create the scaled bitmap
+        Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+
+        // Create a mutable Bitmap to draw the masked image
+        Bitmap maskedBitmap = Bitmap.createBitmap((int) pathWidth, (int) pathHeight, Bitmap.Config.ARGB_8888);
+
+        // Create a Canvas to draw on the mutable Bitmap
+        Canvas canvas = new Canvas(maskedBitmap);
+
+        // Create a Paint object for the mask
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        // Parse the path data from the vector drawable
+        Path path = PathParser.createPathFromPathData(getResources().getString(R.string.vector_path_data));
+
+        // Clip the canvas with the path
+        canvas.save();
+        canvas.clipPath(path);
+
+        // Calculate the position to center the scaled bitmap in the path
+        float dx = (pathWidth - scaledBitmap.getWidth()) / 2;
+        float dy = (pathHeight - scaledBitmap.getHeight()) / 2;
+
+        // Draw the scaled image onto the canvas, which is now clipped to the path
+        canvas.drawBitmap(scaledBitmap, dx, dy, paint);
+        canvas.restore();
+
+        // Set the masked Bitmap to an ImageView
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(maskedBitmap);
+
+        Log.d("BitmapInfo", "Original Bitmap Width: " + originalBitmap.getWidth() + ", Height: " + originalBitmap.getHeight());
+        Log.d("BitmapInfo", "Masked Bitmap Width: " + maskedBitmap.getWidth() + ", Height: " + maskedBitmap.getHeight());
+    }
+
+    private float dpToPx(float dp) {
+        return dp * getResources().getDisplayMetrics().density;
+    }
+}
