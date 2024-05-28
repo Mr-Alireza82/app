@@ -32,12 +32,21 @@ public class MainActivity extends AppCompatActivity {
         float scaleY = pathHeight / originalBitmap.getHeight();
         float scale = Math.min(scaleX, scaleY);
 
-        // Create a matrix for scaling
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
+        // Create a matrix for scaling the image
+        Matrix imageMatrix = new Matrix();
+        imageMatrix.postScale(scale, scale);
 
         // Create the scaled bitmap
-        Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+        Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), imageMatrix, true);
+
+        // Parse the path data from the string resource
+        String vectorPathData = getResources().getString(R.string.vector_path_data);
+        Path path = PathParser.createPathFromPathData(vectorPathData);
+
+        // Scale the path to the desired size
+        Matrix pathMatrix = new Matrix();
+        pathMatrix.postScale(pathWidth / 200, pathHeight / 200); // Scale path to the desired dimensions
+        path.transform(pathMatrix);
 
         // Create a mutable Bitmap to draw the masked image
         Bitmap maskedBitmap = Bitmap.createBitmap((int) pathWidth, (int) pathHeight, Bitmap.Config.ARGB_8888);
@@ -47,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a Paint object for the mask
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        // Parse the path data from the vector drawable
-        Path path = PathParser.createPathFromPathData(getResources().getString(R.string.vector_path_data));
 
         // Clip the canvas with the path
         canvas.save();
