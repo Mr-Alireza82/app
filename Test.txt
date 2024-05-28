@@ -1,63 +1,9 @@
-package com.example.myapplication3;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.os.Bundle;
-import android.widget.ImageView;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ImageView mImageView = findViewById(R.id.triangleView);
-        Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.receipt);
-
-        // Load the mask image
-        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.triangle_mask);
-
-        // Create a scaled version of the original image to match the dimensions of the mask
-        Bitmap scaledOriginal = Bitmap.createScaledBitmap(original, mask.getWidth(), mask.getHeight(), true);
-
-        // Create a new bitmap to hold the result
-        Bitmap result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
-
-        // Create a canvas with the result bitmap
-        Canvas mCanvas = new Canvas(result);
-
-        // Paint for masking
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        // Create a path for the triangle shape
-        Path path = new Path();
-        path.moveTo(0, 0);
-        path.lineTo(mask.getWidth(), 0);
-        path.lineTo(mask.getWidth() / 2f, mask.getHeight());
-        path.close();
-
-        // Draw the scaled original image
-        mCanvas.drawBitmap(scaledOriginal, 0, 0, null);
-
-        // Clip the canvas to the triangle path
-        mCanvas.clipPath(path);
-
-        // Clear the canvas with transparent color
-        mCanvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-
-        // Draw the clipped image
-        mCanvas.drawBitmap(scaledOriginal, 0, 0, null);
-
-        // Set the result bitmap to the ImageView
-        mImageView.setImageBitmap(result);
-
-        // Set the scale type
-        mImageView.setScaleType(ImageView.ScaleType.CENTER);
-    }
-}
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="206"
+    android:viewportHeight="206">
+    <path
+        android:pathData="M18,18c24,-24 146,-24 170,0s24,146 0,170S42,212 18,188 -6,42 18,18Z"
+        android:fillColor="#28ff03"/>
+</vector>
